@@ -1,6 +1,6 @@
 # proclet
 
-A node package for running single functions as separate processes
+A node package for running single functions as separate processes, wrapped in a simple API with event-based IPC messaging out of the box.
 
 ## API
 
@@ -20,7 +20,9 @@ The process is started by calling:
 proclet.run();
 ```
 
-The object exposes two properties: `.child` and `.parent`.
+Behind the scenes, Proclet takes your function's source, wraps it in boilerplate and saves it to a temporary file, which is then started up as a separate node process. The filenames are based on a SHA512 hash of the worker function source, so multiple instatiations of an identical function will use the same temporary source file if it's available on disk.
+
+The `Proclet` instance exposes two properties: `.child` and `.parent`.
 
 ### `.child`
 
@@ -51,6 +53,8 @@ Monitors three events:
 .send(message)
 ```
 Sends a message to the child process
+
+All event handlers may be attached before or after running the `run` method.
 
 ## Example
 
