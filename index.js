@@ -38,7 +38,7 @@ class Proclet {
 	}*/
 
 	send (message) {
-		this._child.send(typeof message === 'string' ? {type: 'message', payload: message} : message);
+		this._child.send(message);
 	}
 
 	run() {
@@ -58,34 +58,21 @@ class Proclet {
 				return (${(this._childHandlers['message'] || function(){}).toString()})(message)
 			}).bind($$__run);
 
-			$$__run.onClose = (function() {
-				return (${(this._childHandlers['close'] || function(){}).toString()})()
-			}).bind($$__run);
-
 			$$__run.close = function (code = 0) {
 				process.exit(code);
 			};
 
-			$$__run.send = function (message, type = 'message') {
-				process.send({ type: type, payload: message });
+			$$__run.send = function (message) {
+				process.send(message);
 			};
 
 			process.on('uncaughtException', function (error) {
-				process.send({ type: 'error', payload: { name: error.name, stack: error.stack } });
+				process.send({ 'error': { name: error.name, stack: error.stack } });
 				process.exit(1);
 			});
 
 			process.on('message', function (message) {
-				if (message.type === 'message') {
-					$$__run.onMessage.call($$__run, message.payload);
-
-				} else if (message.type === 'close') {
-					$$__run.onClose.call($$__run, message.payload);
-					process.exit(0);
-
-				} else {
-					process.exit(1);
-				}
+				$$__run.onMessage.call($$__run, message);
 			});
 
 			$$__run.call($$__run);`;
