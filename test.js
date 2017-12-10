@@ -8,7 +8,10 @@ const proclet = new Proclet(() => {
 });
 
 proclet.child.on('message', message => {
-	this.send('Child received a message');
+	this.send('Message from parent process: ' + message.payload);
+	if (message.payload.indexOf('Hi') === 0) {
+		this.send('Let\'s not get stuck in a loop, shall we?');
+	}
 });
 
 proclet.child.on('close', message => {
@@ -16,7 +19,11 @@ proclet.child.on('close', message => {
 });
 
 proclet.parent.on('message', message => {
-	console.log('Message from subprocess', message.type, message.payload);
+	console.log('Message from subprocess:', message.payload);
+
+	if (message.payload.indexOf('Hello') === 0) {
+		proclet.parent.send({type: 'message', 'payload': 'Hi!'});
+	}
 });
 
 proclet.parent.on('error', error => {
@@ -29,7 +36,7 @@ proclet.parent.on('exit', message => {
 
 proclet.run();
 
-setTimeout(() => proclet.send({ type: 'close' }), 3000);
+setTimeout(() => proclet.parent.send({ type: 'close' }), 3000);
 
 global.mainLoop = setInterval(() => {}, Number.POSITIVE_INFINITY);
 
