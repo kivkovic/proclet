@@ -46,8 +46,7 @@ class Proclet {
 			fs   = require('fs'),
 			util = require('util'),
 			fork = require('child_process').fork,
-			hash = require('crypto').createHash('sha512'),
-			cache_timeout = 3600;
+			hash = require('crypto').createHash('sha512');
 
 		const funcDef =
 			`const $$__run = function () {
@@ -81,8 +80,7 @@ class Proclet {
 
 		const childPath = `${os.tmpdir()}/proclet_${hash.digest('hex')}.js`;
 
-		if (!fs.existsSync(childPath)
-			|| (new Date() - new Date(util.inspect(fs.statSync(childPath).mtime)) > cache_timeout * 1000)) {
+		if (!fs.existsSync(childPath)) {
 			fs.writeFileSync(childPath, funcDef);
 		}
 
