@@ -101,4 +101,14 @@ proclet.run();
 setTimeout(() => proclet.parent.send('/close'), 3000);
 
 global.mainLoop = setInterval(() => {}, Number.POSITIVE_INFINITY);
+
+
+// console.log output from parent process:
+//
+// Message from subprocess: Hello
+// Message from subprocess: Message from parent process: Hi!
+// Message from subprocess: Let's not get stuck in a loop, shall we?
+// Message from subprocess: Message from parent process: /close
+// Message from subprocess: Child closing
+
 ```
