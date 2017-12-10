@@ -8,21 +8,21 @@ const proclet = new Proclet(() => {
 });
 
 proclet.child.on('message', message => {
-	this.send('Message from parent process: ' + message.payload);
-	if (message.payload.indexOf('Hi') === 0) {
+	this.send('Message from parent process: ' + message);
+	
+	if (message.indexOf('Hi') === 0) {
 		this.send('Let\'s not get stuck in a loop, shall we?');
+	} else if (message.toLowerCase() === '/close') {
+		this.send('Child closing');
+		this.close(0);
 	}
 });
 
-proclet.child.on('close', message => {
-	this.send('Child closing');
-});
-
 proclet.parent.on('message', message => {
-	console.log('Message from subprocess:', message.payload);
+	console.log('Message from subprocess:', message);
 
-	if (message.payload.indexOf('Hello') === 0) {
-		proclet.parent.send({type: 'message', 'payload': 'Hi!'});
+	if (message.indexOf('Hello') === 0) {
+		proclet.parent.send('Hi!');
 	}
 });
 
@@ -36,7 +36,7 @@ proclet.parent.on('exit', message => {
 
 proclet.run();
 
-setTimeout(() => proclet.parent.send({ type: 'close' }), 3000);
+setTimeout(() => proclet.parent.send('/close'), 3000);
 
 global.mainLoop = setInterval(() => {}, Number.POSITIVE_INFINITY);
 
