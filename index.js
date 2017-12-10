@@ -38,8 +38,7 @@ class Proclet {
 	}*/
 
 	send (message) {
-		this._child.send(message);
-		return this;
+		this._child.send(typeof message === 'string' ? {type: 'message', payload: message} : message);
 	}
 
 	run() {
@@ -55,8 +54,8 @@ class Proclet {
 				return (${this._func.toString()})()
 			};
 
-			$$__run.onMessage = (function() {
-				return (${(this._childHandlers['message'] || function(){}).toString()})()
+			$$__run.onMessage = (function(message) {
+				return (${(this._childHandlers['message'] || function(){}).toString()})(message)
 			}).bind($$__run);
 
 			$$__run.onClose = (function() {
