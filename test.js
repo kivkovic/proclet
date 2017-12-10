@@ -29,7 +29,7 @@ proclet.parent.on('exit', message => {
 
 proclet.run();
 
-setTimeout(() => proclet.parent.send({ type: 'close' }), 2000);
+setTimeout(() => proclet.send({ type: 'close' }), 3000);
 
 global.mainLoop = setInterval(() => {}, Number.POSITIVE_INFINITY);
 

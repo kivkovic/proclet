@@ -16,30 +16,30 @@ class Proclet {
 	}
 
 	get parent() {
-		return {
-			on: (function (event, callback) {
-				if (this._child) {
-					this._child.on(event, callback);
-				} else {
-					this._lazyChild.push({event: event, callback: callback});
-				}
-				return this;
-			}).bind(this),
+		return this;
+	}
 
-			clear: (function (event) {
-				if (this._child) {
-					this._child.removeAllListeners(event);
-				} else {
-					this._lazyChild = this._lazyChild.filter(e => event !== undefined ? e.event !== event : false);
-				}
-				return this;
-			}).bind(this),
+	on (event, callback) {
+		if (this._child) {
+			this._child.on(event, callback);
+		} else {
+			this._lazyChild.push({event: event, callback: callback.bind(this)});
+		}
+		return this;
+	}
 
-			send: (function(message) {
-				this._child.send(message);
-				return this;
-			}).bind(this)
-		};
+	/*clear (event) {
+		if (this._child) {
+			this._child.removeAllListeners(event);
+		} else {
+			this._lazyChild = this._lazyChild.filter(e => event !== undefined ? e.event !== event : false);
+		}
+		return this;
+	}*/
+
+	send (message) {
+		this._child.send(message);
+		return this;
 	}
 
 	run() {
